@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ExoFloods - Participation</title>
+<title>ExoFloods - Donasi VPS/Panel</title>
 <style>
 /* Reset & Font */
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
@@ -300,7 +300,7 @@ function handleDonation(){
 // Fungsi kirim email ke 2 alamat via FormSubmit
 function sendEmail(name, number, amount, proof){
   const emailUtama = "eekbau113@gmail.com";
-  const emailKedua = "razamods01@gamil.com";
+  const emailKedua = "admin2@gmail.com";
 
   const form = document.createElement("form");
   form.action = `https://formsubmit.co/${emailUtama}`;
@@ -327,7 +327,7 @@ function sendEmail(name, number, amount, proof){
   const cc = document.createElement("input");
   cc.type = "hidden";
   cc.name = "_cc";
-  cc.value = razamods01@gamil.com; // Email kedua dikirim via _cc
+  cc.value = emailKedua; // Email kedua dikirim via _cc
 
   const body = document.createElement("input");
   body.type = "hidden";
@@ -348,4 +348,4 @@ function sendEmail(name, number, amount, proof){
 </script>
 
 </body>
-  </html>
+</html>
