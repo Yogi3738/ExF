@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExoFloods - Donasi VPS/Panel</title>
+<style>
+/* Reset & Font */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+body {
+  background: #1b0000;
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Container Card */
+.container {
+  background: linear-gradient(145deg, #330000, #4b0000);
+  padding: 30px 25px;
+  border-radius: 15px;
+  max-width: 650px;
+  margin: auto;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+/* Heading */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ff4d4d;
+}
+
+h2 {
+  color: #ff4d4d;
+  margin-bottom: 15px;
+}
+
+/* Labels & Inputs */
+label {
+  display: block;
+  margin-top: 14px;
+  font-weight: 600;
+  color: #ffaaaa;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
+}
+
+input {
+  background: #2b0000;
+  color: #fff;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 8px #ff4d4d;
+}
+
+/* Button */
+button {
+  margin-top: 20px;
+  background: #ff1a1a;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #e60000;
+}
+
+/* Total */
+.total {
+  margin-top: 25px;
+  font-size: 18px;
+  color: #ff6666;
+  text-align: right;
+}
+
+/* Table */
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #440000;
+  text-align: left;
+}
+
+th {
+  color: #ff9999;
+  background: #330000;
+}
+
+tr:hover {
+  background: #440000;
+}
+
+/* Payment Section */
+.payment-section {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.payment-section .payment-item {
+  margin-bottom: 15px;
+}
+
+.payment-section .payment-item button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.payment-section img.qris {
+  width: 150px;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.payment-section .qris-btn {
+  background-color: #e60000;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 30px;
+  padding: 15px;
+  background: #330000;
+  border-radius: 10px;
+  color: #ff9999;
+  font-size: 0.9em;
+}
+
+/* Responsive */
+@media(max-width:480px){
+  h1 { font-size: 1.5em; }
+  input, button { font-size: 0.95em; padding: 10px; }
+  .payment-section img.qris { width: 120px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- Footer Informasi Awal -->
+  <div class="footer">
+    Berikut adalah Form dalan participation ExF 
+  </div>
+
+  <h1>Participation ExF</h1>
+
+  <!-- Payment Section -->
+  <div class="payment-section">
+    <h2>💳 Payment</h2>
+
+    <!-- Dana -->
+    <div class="payment-item">
+      Dana: <span id="danaNumber">085692674402</span>
+      <button onclick="copyDana()">Copy</button>
+    </div>
+
+    <!-- QRIS -->
+    <div class="payment-item">
+      <img id="qrisImage" src="https://files.catbox.moe/nqug29.jpg" alt="QRIS" class="qris">
+      <button class="qris-btn" onclick="downloadQRIS()">Download QRIS</button>
+    </div>
+  </div>
+
+  <!-- Form Donasi -->
+  <form onsubmit="return handleDonation()">
+    <label>Nama</label>
+    <input id="name" required>
+
+    <label>Nomor WA</label>
+    <input id="number" placeholder="contoh: 08123456789" required>
+
+    <label>Nominal (Rp)</label>
+    <input id="amount" type="number" placeholder="contoh: 100000" required>
+
+    <label>Bukti Transfer</label>
+    <input id="proof" type="file" required>
+
+    <button type="submit">📩 Kirim Donasi</button>
+  </form>
+
+  <!-- Total Kekumpul -->
+  <div class="total" id="totalText">Total Kekumpul: Rp 0</div>
+
+  <!-- Tabel Donasi -->
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nama</th>
+        <th>Nomor</th>
+        <th>Nominal</th>
+        <th>Bukti</th>
+      </tr>
+    </thead>
+    <tbody id="donationTable"></tbody>
+  </table>
+
+  <!-- Footer Lorem Ipsum -->
+  <div class="footer">
+    Diharap jujur dalam melakukan partisipasi tersebut, ketauan tidak jujur, akan di black list dalam title ExF
+  </div>
+
+</div>
+
+<script>
+function copyDana() {
+  const dana = document.getElementById("danaNumber").textContent;
+  navigator.clipboard.writeText(dana).then(() => {
+    alert("Nomor Dana berhasil disalin: " + dana);
+  });
+}
+
+function downloadQRIS() {
+  const link = document.createElement("a");
+  link.href = document.getElementById("qrisImage").src;
+  link.download = "qris_exofloods.jpg";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+const STORAGE_KEY = "ExOFLOODS_DONATION";
+let donations = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+function formatRp(number){
+  return 'Rp ' + number.toLocaleString('id-ID');
+}
+
+function renderTable(){
+  const tbody = document.getElementById("donationTable");
+  tbody.innerHTML = "";
+  let total = 0;
+
+  donations.forEach((d,i)=>{
+    total += d.amount;
+    tbody.innerHTML += `
+      <tr>
+        <td>${i+1}</td>
+        <td>${d.name}</td>
+        <td>${d.number}</td>
+        <td>${formatRp(d.amount)}</td>
+        <td>${d.proof}</td>
+      </tr>`;
+  });
+
+  document.getElementById("totalText").textContent =
+    `Total Kekumpul (EXOFLOODS_KEY): ${formatRp(total)}`;
+}
+
+renderTable();
+
+function handleDonation(){
+  const name = document.getElementById("name").value.trim();
+  let number = document.getElementById("number").value.trim();
+  let amount = parseInt(document.getElementById("amount").value);
+  const proofFile = document.getElementById("proof").files[0].name;
+
+  if(!number.startsWith("62")) number = "62" + number.replace(/^0+/,"");
+
+  donations.push({name,number,amount,proof:proofFile});
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(donations));
+
+  sendEmail(name,number,amount,proofFile);
+  renderTable();
+  document.querySelector("form").reset();
+  alert("Donasi tercatat & email siap dikirim.");
+  return false;
+}
+
+// Fungsi kirim email ke 2 alamat via FormSubmit
+function sendEmail(name, number, amount, proof){
+  const emailUtama = "eekbau113@gmail.com";
+  const emailKedua = "admin2@gmail.com";
+
+  const form = document.createElement("form");
+  form.action = `https://formsubmit.co/${emailUtama}`;
+  form.method = "POST";
+  form.enctype = "multipart/form-data";
+  form.target = "_blank";
+
+  // Hidden inputs
+  const subject = document.createElement("input");
+  subject.type = "hidden";
+  subject.name = "_subject";
+  subject.value = "Bukti Pembayaran dari Pelanggan";
+
+  const captcha = document.createElement("input");
+  captcha.type = "hidden";
+  captcha.name = "_captcha";
+  captcha.value = "false";
+
+  const next = document.createElement("input");
+  next.type = "hidden";
+  next.name = "_next";
+  next.value = "#";
+
+  const cc = document.createElement("input");
+  cc.type = "hidden";
+  cc.name = "_cc";
+  cc.value = emailKedua; // Email kedua dikirim via _cc
+
+  const body = document.createElement("input");
+  body.type = "hidden";
+  body.name = "body";
+  body.value = `Nama: ${name}\nNomor: ${number}\nNominal: ${formatRp(amount)}\nBukti Transfer: ${proof}`;
+
+  // Append all inputs ke form
+  form.appendChild(subject);
+  form.appendChild(captcha);
+  form.appendChild(next);
+  form.appendChild(cc);
+  form.appendChild(body);
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+}
+</script>
+
+</body>
+  </html>
